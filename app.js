@@ -1,3 +1,14 @@
+const browseContainer = document.querySelector('.browse-container');
+const playlistContainer = document.querySelector('.playlist-container');
+
+const genreImg = document.querySelector('.browse-container .browse .img');
+const genreHeading = document.querySelector(
+	'.browse-container .browse .heading'
+);
+const genreDescription = document.querySelector(
+	'browse-container .browse .description'
+);
+
 const APIController = (function () {
 	const clientId = 'ea31e31a4afd417383e99aa0e994dd8c';
 	const clientSecret = '2b65112ba398461389dbbe48efa4f37a';
@@ -104,16 +115,6 @@ const UIController = (function () {
 		divSonglist: '.song-list',
 	};
 
-	const browseContainer = document.querySelector('.browse-container');
-	const genre = document.querySelector('.browse-container .browse');
-	const genreImg = document.querySelector('.browse-container .browse .img');
-	const genreHeading = document.querySelector(
-		'.browse-container .browse .heading'
-	);
-	const genreDescription = document.querySelector(
-		'browse-container .browse .description'
-	);
-
 	// console.log(browseContainer);
 	// console.log(genre);
 
@@ -126,6 +127,8 @@ const UIController = (function () {
 			// 	.querySelector(DOMElements.selectGenre)
 			// 	.insertAdjacentHTML('beforeend', html);
 
+			browseContainer.style.display = 'flex';
+
 			let html = `
           <img src="${imgUrl}">
           <div class="heading">${text}</div>
@@ -133,14 +136,39 @@ const UIController = (function () {
 
 			let elem = document.createElement('div');
 			elem.className = 'browse';
+			elem.id = `${value}`;
 			elem.innerHTML = html;
 
 			// console.log(browseContainer);
 			browseContainer.appendChild(elem);
 		},
 
+		createPlaylist(name, value, description, img, owner) {
+			browseContainer.style.display = 'none';
+			playlistContainer.style.display = 'flex';
+
+			let html = `
+          <img src="${img}">
+          <div class="heading">${name}</div>
+          <div class="owner">By ${owner}</div>          
+      `;
+
+			let elem = document.createElement('div');
+			elem.className = 'playlist';
+			elem.id = `${value}`;
+			elem.innerHTML = html;
+
+			playlistContainer.appendChild(elem);
+		},
+
 		storeToken(value) {
 			document.querySelector(DOMElements.hfToken).value = value;
+		},
+
+		getStoredToken() {
+			return {
+				token: document.querySelector(DOMElements.hfToken).value,
+			};
 		},
 	};
 })();
@@ -163,6 +191,42 @@ const APPController = (function (UICtrl, APICtrl) {
 			// console.log(element.icons[0].url);
 			UICtrl.createGenre(element.name, element.id, element.icons[0].url);
 		});
+
+		showPlaylist();
+	};
+
+	const showPlaylist = async () => {
+		const genre = document.querySelectorAll('.browse');
+		// console.log(genre);
+		for (let i = 0; i < genre.length; i++) {
+			let g = genre[i];
+
+			// console.log(g);
+
+			g.addEventListener('click', async function () {
+				//get the token that's stored on the page
+				const token = UICtrl.getStoredToken().token;
+				// get the genre select field
+				// const genreSelect = g.id;
+				// get the genre id associated with the selected genre
+				const genreId = g.id;
+				// console.log(g.id);
+				// ge the playlist based on a genre
+				const playlist = await APICtrl.getPlaylistByGenre(token, genreId);
+				// create a playlist list item for every playlist returned
+				playlist.forEach((p) => {
+					console.log(p);
+					// console.log(p.owner.display_name);
+					UICtrl.createPlaylist(
+						p.name,
+						p.tracks.href,
+						p.description,
+						p.images[0].url,
+						p.owner.display_name
+					);
+				});
+			});
+		}
 	};
 
 	return {
