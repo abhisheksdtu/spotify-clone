@@ -8,6 +8,7 @@ const genreDescription = document.querySelector(
 	'browse-container .browse .description'
 );
 let tracksContainer = document.querySelector('.tracks-container');
+let playlistPage = document.querySelector('.playlist-page');
 
 const APIController = (function () {
 	const clientId = 'ea31e31a4afd417383e99aa0e994dd8c';
@@ -164,30 +165,56 @@ const UIController = (function () {
 			img,
 			releaseDate,
 			artists,
-			duration
+			duration,
+			songUrl
 		) {
 			browseContainer.style.display = 'none';
 			playlistContainer.style.display = 'none';
-			tracksContainer.style.display = 'flex';
+			playlistPage.style.display = 'flex';
 
 			let mainTracksContainer = document.querySelector(
 				'.main-tracks-container'
 			);
 
+			// console.log(id);
+
 			let html = `
-				<div class='track'>
-					<div class='track-index'>${idx + 1}</div>
-					<div class='track-title'>${trackName}</div>
+					<div class="track-index">
+                        <div class="track-index-number">${idx + 1}</div>
+                            <span class="track-index-icon" style="display: none;">
+                                <i class="fas fa-play"></i>
+                            </span>
+                        </div>
+                    </div>
+					<div class="track-title-container">
+                        <img src="${img}">
+                        <div class="track-row">
+                        	<div class="track-title">${trackName}</div>
+                            <div class="track-artists">${artists}</div>
+                        </div>
+                    </div>
 					<div class='track-album'>${albumName}</div>
 					<div class='track-date'>${releaseDate}</div>
-					<div class='track-duration'>${duration}</div>
-				</div>
+					<div class='track-duration'>${duration}</div>				
 			`;
 
 			let elem = document.createElement('div');
 			elem.className = 'track';
-			elem.id = `${id}`;
+			// elem.id = `${id}`;
 			elem.innerHTML = html;
+
+			let musicPlayer = document.querySelector('.music-player');
+
+			let htm = document.createElement('div');
+
+			console.log(songUrl);
+
+			htm.innerHTML = `
+			<audio controls="" name="media" >
+				<source src="${songUrl}" type="audio/mpeg">
+			</audio>`;
+
+			musicPlayer.appendChild(htm);
 
 			mainTracksContainer.appendChild(elem);
 		},
@@ -276,7 +303,7 @@ const APPController = (function (UICtrl, APICtrl) {
 				// const playlistSelect = g.id;
 				// get the playlist id associated with the selected playlist
 				const playlistId = g.id;
-				console.log(g.id);
+				// console.log(g.id);
 				// ge the playlist based on a playlist
 				const tracks = await APICtrl.getTracks(token, playlistId);
 				// create a playlist list item for every playlist returned
@@ -286,33 +313,66 @@ const APPController = (function (UICtrl, APICtrl) {
 					let artists = [];
 					// console.log(artists);
 
+					// console.log(el);
+
+					// console.log(el.track.preview_url);
+
 					for (let i in el.track.artists) {
 						// console.log(el.track.artists[i].name);
 
-						artists.push(el.track.artists[i].name);
+						artists.push(' ' + el.track.artists[i].name);
 					}
 
 					let duration = millisToMinutesAndSeconds(el.track.duration_ms);
 
-					console.log(duration);
+					// console.log(el.track.album.images[1].url);
 
 					UICtrl.createTrack(
 						idx,
 						el.track.href,
 						el.track.name,
 						el.track.album.name,
-						el.track.album.images[1],
+						el.track.album.images[1].url,
 						el.track.album.release_date,
 						artists,
-						duration
+						duration,
+						el.track.preview_url
 					);
 
 					idx++;
 				});
+				hoverTrack();
 			});
 		}
 	};
 
+	function hoverTrack() {
+		let allTracks = document.querySelectorAll('.track');
+
+
+		for (let i = 0; i < allTracks.length; i++) {
+			let elem = allTracks[i];
+			elem.addEventListener('mouseenter', function () {
+				let trackIndex = document.querySelectorAll('.track-index-number');
+				let trackIndexIcon = document.querySelectorAll('.track-index-icon');
+
+				console.log(trackIndex[i]);
+
+				trackIndex[i].style.display = 'none';
+
+				trackIndexIcon[i].style.display = 'block';
+			});
+
+			elem.addEventListener('mouseleave', function () {
+				let trackIndex = document.querySelectorAll('.track-index-number');
+				let trackIndexIcon = document.querySelectorAll('.track-index-icon');
+
+				trackIndexIcon[i].style.display = 'none';
+
+				trackIndex[i].style.display = 'block';
+			});
+		}
+	}
 	return {
 		init() {
 			console.log('App is starting');

@@ -6,6 +6,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
+            integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
         <title>Document</title>
     </head>
 
@@ -34,7 +36,7 @@
                     Search
                 </div>
                 <div class="content-container">
-                    <div class="content-heading">Browse All</div>
+                    <!-- <div class="content-heading">Browse All</div> -->
                     <!-- <img src=""> -->
 
                     <div class="browse-container">
@@ -53,7 +55,7 @@
                         </div> -->
                     </div>
 
-                    <div class="playlist-page">
+                    <div class="playlist-page" style="display: none;">
                         <!-- <div class="main-content">
 
                             <div class="playlist-info">
@@ -73,7 +75,7 @@
                             </div>
                         </div> -->
 
-                        <div class="tracks-container" style="display: none;">
+                        <div class="tracks-container">
                             <div class="top-row">
                                 <div class="top-row-index">
                                     #
@@ -120,13 +122,32 @@
 
                             <div class="main-tracks-container">
                                 <!-- <div class="track">
-                                    <div class="track-index">1</div>
-                                    <div class="track-title">abc</div>
+                                    <div class="track-index">
+                                        <div class="track-index-number">
+                                            1
+                                        </div>
+                                        <span class="track-index-icon" style="display: none;">
+                                            <i class="fas fa-play"></i>
+                                        </span>
+                                    </div>
+                                    <div class="track-title-container">
+                                        <img src="https://fakeimg.pl/50/">
+                                        <div class="track-row">
+                                            <div class="track-title">
+                                                Levi
+                                            </div>
+
+                                            <div class="track-artists">
+                                                Levi
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="track-album">aaa</div>
                                     <div class="track-date">17-1</div>
                                     <div class="track-duration">3:40</div>
 
                                 </div> -->
+
                             </div>
 
                         </div>
@@ -134,10 +155,20 @@
                 </div>
             </div>
 
+            <div class="bottom-container">
+
+                <div class="music-player">
+
+
+
+
+                </div>
+            </div>
         </div>
         </div>
 
         <script src="app.js"></script>
+        <script src="init.js"></script>
     </body>
 
 </html>
