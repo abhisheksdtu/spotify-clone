@@ -23,7 +23,7 @@ body {
 			.options,
 			.left-playlists {
 				display: flex;
-				justify-content: center;
+				// justify-content: center;
 				align-items: center;
 			}
 
@@ -43,6 +43,13 @@ body {
 						background-color: #282828;
 						color: #fff;
 					}
+				}
+
+				.home {
+				}
+				.search {
+				}
+				.library {
 				}
 			}
 
@@ -156,6 +163,106 @@ body {
 							font-size: 14px;
 							padding-left: 1.5rem;
 							color: #ccc;
+						}
+					}
+				}
+
+				.playlist-page {
+					display: flex;
+					width: 100%;
+
+					.tracks-container {
+						display: flex;
+						width: 100%;
+						flex-direction: column;
+
+						.top-row {
+							display: flex;
+							width: 100%;
+							// justify-content: space-between;
+							padding: 1rem;
+							border-bottom: 1px solid #aaa;
+
+							&-index,
+							&-title,
+							&-album,
+							&-date,
+							&-duration {
+								display: flex;
+							}
+
+							&-index {
+								max-width: 5%;
+								min-width: 5%;
+								justify-content: center;
+							}
+
+							&-title {
+								max-width: 30%;
+								min-width: 30%;
+							}
+
+							&-album {
+								max-width: 25%;
+								min-width: 25%;
+							}
+
+							&-date {
+								max-width: 20%;
+								min-width: 20%;
+							}
+
+							&-duration {
+								max-width: 15%;
+								min-width: 15%;
+							}
+						}
+
+						.main-tracks-container {
+							display: flex;
+							width: 100%;
+							flex-direction: column;
+							padding: 1rem;
+
+							.track {
+								display: flex;
+								width: 100%;
+
+								&-index,
+								&-title,
+								&-album,
+								&-date,
+								&-duration {
+									display: flex;
+								}
+
+								&-index {
+									max-width: 5%;
+									min-width: 5%;
+									justify-content: center;
+								}
+
+								&-title {
+									max-width: 30%;
+									min-width: 30%;
+									// overflow-x: scroll;
+								}
+
+								&-album {
+									max-width: 25%;
+									min-width: 25%;
+								}
+
+								&-date {
+									max-width: 20%;
+									min-width: 20%;
+								}
+
+								&-duration {
+									max-width: 15%;
+									min-width: 15%;
+								}
+							}
 						}
 					}
 				}

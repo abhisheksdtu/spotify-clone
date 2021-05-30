@@ -1,6 +1,5 @@
 const browseContainer = document.querySelector('.browse-container');
 const playlistContainer = document.querySelector('.playlist-container');
-
 const genreImg = document.querySelector('.browse-container .browse .img');
 const genreHeading = document.querySelector(
 	'.browse-container .browse .heading'
@@ -8,6 +7,7 @@ const genreHeading = document.querySelector(
 const genreDescription = document.querySelector(
 	'browse-container .browse .description'
 );
+let tracksContainer = document.querySelector('.tracks-container');
 
 const APIController = (function () {
 	const clientId = 'ea31e31a4afd417383e99aa0e994dd8c';
@@ -45,7 +45,7 @@ const APIController = (function () {
 	};
 
 	const _getPlaylistByGenre = async (token, genreId) => {
-		const limit = 10;
+		const limit = 15;
 
 		const result = await fetch(
 			`https://api.spotify.com/v1/browse/categories/${genreId}/playlists?limit=${limit}`,
@@ -60,7 +60,7 @@ const APIController = (function () {
 	};
 
 	const _getTracks = async (token, tracksEndPoint) => {
-		const limit = 10;
+		const limit = 100;
 
 		const result = await fetch(`${tracksEndPoint}?limit=${limit}`, {
 			method: 'GET',
@@ -69,7 +69,7 @@ const APIController = (function () {
 
 		const data = await result.json();
 
-		console.log(data.items);
+		// console.log(data.items);
 
 		return data.items;
 	};
@@ -122,17 +122,12 @@ const UIController = (function () {
 	return {
 		// CREATES A GENRE
 		createGenre(text, value, imgUrl) {
-			// const html = `<option value="${value}">${text}</option>`;
-			// document
-			// 	.querySelector(DOMElements.selectGenre)
-			// 	.insertAdjacentHTML('beforeend', html);
-
-			browseContainer.style.display = 'flex';
+			// browseContainer.style.display = 'flex';
 
 			let html = `
-          <img src="${imgUrl}">
-          <div class="heading">${text}</div>
-      `;
+          		<img src="${imgUrl}">
+          		<div class="heading">${text}</div>
+      		`;
 
 			let elem = document.createElement('div');
 			elem.className = 'browse';
@@ -159,6 +154,42 @@ const UIController = (function () {
 			elem.innerHTML = html;
 
 			playlistContainer.appendChild(elem);
+		},
+
+		createTrack(
+			idx,
+			id,
+			trackName,
+			albumName,
+			img,
+			releaseDate,
+			artists,
+			duration
+		) {
+			browseContainer.style.display = 'none';
+			playlistContainer.style.display = 'none';
+			tracksContainer.style.display = 'flex';
+
+			let mainTracksContainer = document.querySelector(
+				'.main-tracks-container'
+			);
+
+			let html = `
+				<div class='track'>
+					<div class='track-index'>${idx + 1}</div>
+					<div class='track-title'>${trackName}</div>
+					<div class='track-album'>${albumName}</div>
+					<div class='track-date'>${releaseDate}</div>
+					<div class='track-duration'>${duration}</div>
+				</div>
+			`;
+
+			let elem = document.createElement('div');
+			elem.className = 'track';
+			elem.id = `${id}`;
+			elem.innerHTML = html;
+
+			mainTracksContainer.appendChild(elem);
 		},
 
 		storeToken(value) {
@@ -215,7 +246,7 @@ const APPController = (function (UICtrl, APICtrl) {
 				const playlist = await APICtrl.getPlaylistByGenre(token, genreId);
 				// create a playlist list item for every playlist returned
 				playlist.forEach((p) => {
-					console.log(p);
+					// console.log(p);
 					// console.log(p.owner.display_name);
 					UICtrl.createPlaylist(
 						p.name,
@@ -224,6 +255,59 @@ const APPController = (function (UICtrl, APICtrl) {
 						p.images[0].url,
 						p.owner.display_name
 					);
+				});
+				showSongs();
+			});
+		}
+	};
+
+	const showSongs = async () => {
+		const playlist = document.querySelectorAll('.playlist');
+		// console.log(playlist);
+		for (let i = 0; i < playlist.length; i++) {
+			let g = playlist[i];
+
+			// console.log(g);
+
+			g.addEventListener('click', async function () {
+				//get the token that's stored on the page
+				const token = UICtrl.getStoredToken().token;
+				// get the playlist select field
+				// const playlistSelect = g.id;
+				// get the playlist id associated with the selected playlist
+				const playlistId = g.id;
+				console.log(g.id);
+				// ge the playlist based on a playlist
+				const tracks = await APICtrl.getTracks(token, playlistId);
+				// create a playlist list item for every playlist returned
+
+				let idx = 0;
+				tracks.forEach((el) => {
+					let artists = [];
+					// console.log(artists);
+
+					for (let i in el.track.artists) {
+						// console.log(el.track.artists[i].name);
+
+						artists.push(el.track.artists[i].name);
+					}
+
+					let duration = millisToMinutesAndSeconds(el.track.duration_ms);
+
+					console.log(duration);
+
+					UICtrl.createTrack(
+						idx,
+						el.track.href,
+						el.track.name,
+						el.track.album.name,
+						el.track.album.images[1],
+						el.track.album.release_date,
+						artists,
+						duration
+					);
+
+					idx++;
 				});
 			});
 		}
@@ -236,6 +320,13 @@ const APPController = (function (UICtrl, APICtrl) {
 		},
 	};
 })(UIController, APIController);
+
+const millisToMinutesAndSeconds = (millis) => {
+	let minutes = Math.floor(millis / 60000);
+	let seconds = ((millis % 60000) / 1000).toFixed(0);
+
+	return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+};
 
 // will need to call a method to load the genres on page load
 APPController.init();
