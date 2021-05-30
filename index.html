@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
             integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+        <link href="//fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
         <title>Document</title>
     </head>
 
@@ -157,10 +158,80 @@
 
             <div class="bottom-container">
 
-                <div class="music-player">
+                <div class="music-container">
+
+                    <div class="music-details">
+                        <div class="music-details-img">
+                            <img src="https://fakeimg.pl/55x55/">
+                        </div>
+
+                        <div class="music-details-row">
+                            <div class="music-details-row-name">
+                                abc
+                            </div>
+                            <div class="music-details-row-artist">
+                                abc
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="music-player">
+                        <div class="row-1">
 
 
+                            <div class="shuffle-btn">
+                                <span class="material-icons-outlined">
+                                    shuffle
+                                </span>
+                            </div>
 
+                            <div class="prev-btn">
+                                <span class="material-icons-outlined">
+                                    skip_previous
+                                </span>
+                            </div>
+
+                            <div class="play-btn">
+                                <span class="material-icons-outlined">
+                                    play_circle_filled
+                                </span>
+                            </div>
+
+                            <div class="next-btn">
+                                <span class="material-icons-outlined">
+                                    skip_next
+                                </span>
+                            </div>
+
+                            <div class="repeat-btn">
+                                <span class="material-icons-outlined">
+                                    repeat
+                                </span>
+                            </div>
+
+                        </div>
+                        <div class="row-2">
+                            <div class="slider-container">
+                                <div class="current-time">00:00</div>
+                                <input type="range" min="1" max="100" value="0" class="seek-slider" onchange="seekTo()">
+                                <div class="total-duration">00:00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="volume-controller">
+                        <div class="slider-container">
+                            <div class="slider-icon-left">
+                                <i class="fa fa-volume-down"></i>
+                            </div>
+
+                            <input type="range" min="1" max="100" value="100" class="volume-slider"
+                                onchange="setVolume()">
+                            <div class="slider-icon-right">
+                                <i class="fa fa-volume-up"></i>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -168,7 +239,6 @@
         </div>
 
         <script src="app.js"></script>
-        <script src="init.js"></script>
     </body>
 
 </html>
