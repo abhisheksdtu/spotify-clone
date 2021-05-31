@@ -9,6 +9,7 @@ const genreDescription = document.querySelector(
 );
 let tracksContainer = document.querySelector('.tracks-container');
 let playlistPage = document.querySelector('.playlist-page');
+let tracksArr = [];
 
 const APIController = (function () {
 	const clientId = 'ea31e31a4afd417383e99aa0e994dd8c';
@@ -46,7 +47,7 @@ const APIController = (function () {
 	};
 
 	const _getPlaylistByGenre = async (token, genreId) => {
-		const limit = 15;
+		const limit = 30;
 
 		const result = await fetch(
 			`https://api.spotify.com/v1/browse/categories/${genreId}/playlists?limit=${limit}`,
@@ -108,12 +109,7 @@ const APIController = (function () {
 const UIController = (function () {
 	//object to hold references to html selectors
 	const DOMElements = {
-		selectGenre: '#select_genre',
-		selectPlaylist: '#select_playlist',
-		buttonSubmit: '#btn_submit',
-		divSongDetail: '#song-detail',
 		hfToken: '#hidden_token',
-		divSonglist: '.song-list',
 	};
 
 	// console.log(browseContainer);
@@ -124,6 +120,8 @@ const UIController = (function () {
 		// CREATES A GENRE
 		createGenre(text, value, imgUrl) {
 			// browseContainer.style.display = 'flex';
+
+			// console.log(imgUrl);
 
 			let html = `
           		<img src="${imgUrl}">
@@ -140,6 +138,8 @@ const UIController = (function () {
 		},
 
 		createPlaylist(name, value, description, img, owner) {
+			// console.log(name);
+
 			browseContainer.style.display = 'none';
 			playlistContainer.style.display = 'flex';
 
@@ -176,9 +176,10 @@ const UIController = (function () {
 				'.main-tracks-container'
 			);
 
-			// console.log(id);
+			if (tracksArr[idx] !== null) {
+				// console.log(id);
 
-			let html = `
+				let html = `
 					<div class="track-index">
                         <div class="track-index-number">${idx + 1}</div>
                             <span class="track-index-icon" style="display: none;">
@@ -198,25 +199,13 @@ const UIController = (function () {
 					<div class='track-duration'>${duration}</div>				
 			`;
 
-			let elem = document.createElement('div');
-			elem.className = 'track';
-			// elem.id = `${id}`;
-			elem.innerHTML = html;
+				let elem = document.createElement('div');
+				elem.className = 'track';
+				// elem.id = `${id}`;
+				elem.innerHTML = html;
 
-			let musicPlayer = document.querySelector('.music-player');
-
-			let htm = document.createElement('div');
-
-			console.log(songUrl);
-
-			htm.innerHTML = `
-			<audio controls="" name="media" >
-				<source src="${songUrl}" type="audio/mpeg">
-			</audio>`;
-
-			musicPlayer.appendChild(htm);
-
-			mainTracksContainer.appendChild(elem);
+				mainTracksContainer.appendChild(elem);
+			}
 		},
 
 		storeToken(value) {
@@ -259,8 +248,6 @@ const APPController = (function (UICtrl, APICtrl) {
 		for (let i = 0; i < genre.length; i++) {
 			let g = genre[i];
 
-			// console.log(g);
-
 			g.addEventListener('click', async function () {
 				//get the token that's stored on the page
 				const token = UICtrl.getStoredToken().token;
@@ -271,6 +258,7 @@ const APPController = (function (UICtrl, APICtrl) {
 				// console.log(g.id);
 				// ge the playlist based on a genre
 				const playlist = await APICtrl.getPlaylistByGenre(token, genreId);
+				// console.log(playlist);
 				// create a playlist list item for every playlist returned
 				playlist.forEach((p) => {
 					// console.log(p);
@@ -327,21 +315,35 @@ const APPController = (function (UICtrl, APICtrl) {
 
 					// console.log(el.track.album.images[1].url);
 
-					UICtrl.createTrack(
-						idx,
-						el.track.href,
-						el.track.name,
-						el.track.album.name,
-						el.track.album.images[1].url,
-						el.track.album.release_date,
-						artists,
-						duration,
-						el.track.preview_url
-					);
+					if (el.track.preview_url !== null) {
+						tracksArr.push({
+							trackName: el.track.name,
+							artists: artists,
+							img: el.track.album.images[1].url,
+							songUrl: el.track.preview_url,
+						});
 
-					idx++;
+						UICtrl.createTrack(
+							idx,
+							el.track.href,
+							el.track.name,
+							el.track.album.name,
+							el.track.album.images[1].url,
+							el.track.album.release_date,
+							artists,
+							duration,
+							el.track.preview_url
+						);
+
+						idx++;
+					}
 				});
+
+				// console.log(tracksArr);
+
 				hoverTrack();
+
+				musicPlayer(1);
 			});
 		}
 	};
@@ -349,14 +351,13 @@ const APPController = (function (UICtrl, APICtrl) {
 	function hoverTrack() {
 		let allTracks = document.querySelectorAll('.track');
 
-
 		for (let i = 0; i < allTracks.length; i++) {
 			let elem = allTracks[i];
 			elem.addEventListener('mouseenter', function () {
 				let trackIndex = document.querySelectorAll('.track-index-number');
 				let trackIndexIcon = document.querySelectorAll('.track-index-icon');
 
-				console.log(trackIndex[i]);
+				// console.log(trackIndex[i]);
 
 				trackIndex[i].style.display = 'none';
 
@@ -373,6 +374,12 @@ const APPController = (function (UICtrl, APICtrl) {
 			});
 		}
 	}
+
+	function musicPlayer(idx) {
+		console.log('music player');
+		mainMusicPlayer(idx);
+	}
+
 	return {
 		init() {
 			console.log('App is starting');

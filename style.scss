@@ -8,6 +8,7 @@ body {
 	background-color: black;
 	color: #fff;
 	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	overflow: hidden;
 
 	#main-container {
 		width: 100vw;
@@ -73,6 +74,7 @@ body {
 			width: 85vw;
 			padding: 2vw;
 			overflow-x: auto;
+			height: calc(100vh - 80px);
 			background-image: linear-gradient(
 				to right bottom,
 				#222222,
@@ -181,7 +183,6 @@ body {
 						.top-row {
 							display: flex;
 							width: 100%;
-							// justify-content: space-between;
 							padding: 1rem;
 							border-bottom: 1px solid #aaa;
 
@@ -421,7 +422,7 @@ body {
 							}
 						}
 
-						.play-btn {
+						.playpause-btn {
 							cursor: context-menu;
 							span {
 								font-size: 40px;
