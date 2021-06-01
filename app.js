@@ -287,14 +287,11 @@ const APPController = (function (UICtrl, APICtrl) {
 			g.addEventListener('click', async function () {
 				//get the token that's stored on the page
 				const token = UICtrl.getStoredToken().token;
-				// get the playlist select field
-				// const playlistSelect = g.id;
-				// get the playlist id associated with the selected playlist
+
 				const playlistId = g.id;
 				// console.log(g.id);
-				// ge the playlist based on a playlist
+
 				const tracks = await APICtrl.getTracks(token, playlistId);
-				// create a playlist list item for every playlist returned
 
 				let idx = 0;
 				tracks.forEach((el) => {
@@ -321,6 +318,7 @@ const APPController = (function (UICtrl, APICtrl) {
 							artists: artists,
 							img: el.track.album.images[1].url,
 							songUrl: el.track.preview_url,
+							duration: 30,
 						});
 
 						UICtrl.createTrack(
@@ -343,7 +341,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
 				hoverTrack();
 
-				musicPlayer(1);
+				musicPlayer();
 			});
 		}
 	};
@@ -375,9 +373,28 @@ const APPController = (function (UICtrl, APICtrl) {
 		}
 	}
 
-	function musicPlayer(idx) {
-		console.log('music player');
-		mainMusicPlayer(idx);
+	function musicPlayer() {
+		// console.log('music player');
+
+		let allTracks = document.querySelectorAll('.track');
+
+		for (let i = 0; i < allTracks.length; i++) {
+			let elem = allTracks[i];
+
+			let isPlaying = false;
+
+			elem.addEventListener('click', function () {
+				// console.log(i);
+				isPlaying = !isPlaying;
+
+				if (isPlaying === false) {
+					isPlaying = true;
+					mainMusicPlayer(i);
+				} else {
+					isPlaying = false;
+				}
+			});
+		}
 	}
 
 	return {
@@ -397,3 +414,5 @@ const millisToMinutesAndSeconds = (millis) => {
 
 // will need to call a method to load the genres on page load
 APPController.init();
+
+// saari current track ko ek array me push krke aur uska output nikaal le

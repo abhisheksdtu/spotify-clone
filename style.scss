@@ -287,15 +287,32 @@ body {
 										display: flex;
 										flex-direction: column;
 										padding-left: 1rem;
+										width: 100%;
+
+										overflow: hidden;
+										white-space: nowrap;
+										word-wrap: break-word;
+										text-overflow: ellipsis;
 
 										.track-title {
+											width: 100%;
 											min-height: 60%;
+											overflow: hidden;
+											white-space: nowrap;
+											word-wrap: break-word;
+											text-overflow: ellipsis;
 											display: flex;
 											align-items: center;
 											color: #fff;
 										}
 
 										.track-artists {
+											width: 100%;
+											padding-right: 10px;
+											overflow: hidden;
+											white-space: nowrap;
+											word-wrap: break-word;
+											text-overflow: ellipsis;
 											min-height: 40%;
 											display: flex;
 											align-items: center;
@@ -465,6 +482,7 @@ body {
 								opacity: 0.7;
 								transition: opacity 0.2s;
 								width: 455px;
+								transition: all 0.1s;
 
 								&::-webkit-slider-thumb {
 									-webkit-appearance: none;

@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
             integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
         <link href="//fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+        <link href="//fonts.googleapis.com/css2?family=Material+Icons+Round" rel="stylesheet">
         <title>Document</title>
     </head>
 
@@ -36,6 +37,13 @@
                 <div class="top-bar">
                     Search
                 </div>
+
+                <div class="navigation-container">
+                    <span class="material-icons-round">
+                        arrow_back_ios
+                    </span>
+                </div>
+
                 <div class="content-container">
                     <!-- <div class="content-heading">Browse All</div> -->
                     <!-- <img src=""> -->
@@ -192,8 +200,8 @@
                             </div>
 
                             <div class="playpause-btn">
-                                <span class="material-icons-outlined">
-                                    play_circle_filled
+                                <span class="material-icons-round">
+                                    play_circle_outline
                                 </span>
                             </div>
 
@@ -210,35 +218,37 @@
                             </div>
 
                         </div>
+
                         <div class="row-2">
                             <div class="slider-container">
                                 <div class="current-time">00:00</div>
-                                <input type="range" min="1" max="100" value="0" class="seek-slider" onchange="seekTo()">
-                                <div class="total-duration">00:30</div>
+                                <input type="range" min="1" max="100" value="0" class="seek-slider" ">
+                                <div class=" total-duration">00:30
                             </div>
                         </div>
                     </div>
-
-                    <div class="volume-controller">
-                        <div class="slider-container">
-                            <div class="slider-icon-left">
-                                <i class="fa fa-volume-down"></i>
-                            </div>
-
-                            <input type="range" min="1" max="100" value="100" class="volume-slider"
-                                onchange="setVolume()">
-                            <div class="slider-icon-right">
-                                <i class="fa fa-volume-up"></i>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
+
+                <div class="volume-controller">
+                    <div class="slider-container">
+                        <div class="slider-icon-left">
+                            <i class="fa fa-volume-down"></i>
+                        </div>
+
+                        <input type="range" min="1" max="100" value="100" class="volume-slider" ">
+                    <div class=" slider-icon-right">
+                        <i class="fa fa-volume-up"></i>
+                    </div>
+                </div>
+
             </div>
+
+        </div>
+        </div>
         </div>
         </div>
 
-        <!-- <script src="player.js"></script> -->
+        <script src="player.js"></script>
         <script src="app.js"></script>
     </body>
 
