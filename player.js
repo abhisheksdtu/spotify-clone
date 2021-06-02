@@ -62,7 +62,7 @@ async function mainMusicPlayer(tracksArr) {
 		// resetValues();
 
 		// Load a new track
-		console.log(tracksArr[trackIndex].songUrl);
+		// console.log(tracksArr[trackIndex].songUrl);
 		currentTrack.src = tracksArr[trackIndex].songUrl;
 		currentTrack.load();
 

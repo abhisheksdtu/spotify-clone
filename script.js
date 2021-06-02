@@ -20,6 +20,7 @@ let searchClickCount = 0;
 let likedSongsClickCount = 0;
 let likedSongsIconFilled = false;
 
+
 function homeFunction() {
 	// REMOVE ACTIVE CLASS FROM ALL OTHER & CHANGE THEIR ICONS
 	for (let i = 0; i < options.length; i++) {

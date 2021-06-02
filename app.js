@@ -14,9 +14,11 @@ let tracksArr = [];
 
 let likedSongsArr = [];
 
+let likedSongIdx = 0;
+
 const APIController = (function () {
-	const clientId = 'ea31e31a4afd417383e99aa0e994dd8c';
-	const clientSecret = '2b65112ba398461389dbbe48efa4f37a';
+	const clientId = '9c04f77f5f55490e8e77e76d038b2934';
+	const clientSecret = '28c03dfb671c4f77b10195cb67ead2ff';
 
 	// private methods
 	const _getToken = async () => {
@@ -190,16 +192,32 @@ const UIController = (function () {
                             </span>
                         </div>
                     </div>
+					
 					<div class="track-title-container">
                         <img src="${img}">
                         <div class="track-row">
                         	<div class="track-title">${trackName}</div>
-                            <div class="track-artists">${artists}</div>
+                            <div class="track-artists">
+								<span>
+									${artists}
+								</span>
+							</div>
                         </div>
                     </div>
-					<div class='track-album'>${albumName}</div>
+
+					<div class='track-album'>
+						<span>
+							${albumName}
+						</span>
+					</div>
+					
 					<div class='track-date'>${releaseDate}</div>
-					<div class='track-duration'>${duration}</div>				
+					
+					<div class='track-duration'>${duration}</div>
+					
+					<div class="track-like-song">
+                        <input type="checkbox" class='heart-checkbox' name="heart" />
+                    </div>
 			`;
 
 				let elem = document.createElement('div');
@@ -256,13 +274,15 @@ const APPController = (function (UICtrl, APICtrl) {
 				const token = UICtrl.getStoredToken().token;
 				// get the genre select field
 				// const genreSelect = g.id;
+				// console.log(g.id);
 				// get the genre id associated with the selected genre
 				const genreId = g.id;
 				// console.log(g.id);
 				// ge the playlist based on a genre
 				const playlist = await APICtrl.getPlaylistByGenre(token, genreId);
-				// console.log(playlist);
+				console.log(playlist);
 				// create a playlist list item for every playlist returned
+
 				playlist.forEach((p) => {
 					// console.log(p);
 					// console.log(p.owner.display_name);
@@ -317,6 +337,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
 					if (el.track.preview_url !== null) {
 						tracksArr.push({
+							idx: idx,
 							trackName: el.track.name,
 							artists: artists,
 							img: el.track.album.images[1].url,
@@ -343,6 +364,8 @@ const APPController = (function (UICtrl, APICtrl) {
 				// console.log(tracksArr);
 
 				hoverTrack();
+
+				clickOnLikeBtn();
 
 				musicPlayer();
 			});
@@ -373,6 +396,44 @@ const APPController = (function (UICtrl, APICtrl) {
 
 				trackIndex[i].style.display = 'block';
 			});
+		}
+	}
+
+	function clickOnLikeBtn() {
+		let allTracks = document.querySelectorAll('.heart-checkbox');
+
+		for (let i = 0; i < allTracks.length; i++) {
+			let elem = allTracks[i];
+
+			let isSongLiked = false;
+
+			// console.log(elem);
+
+			// console.log(likedSongsArr);
+			elem.addEventListener('change', function () {
+				if (this.checked == true) {
+					tracksArr[i].likedSongIdx = likedSongsArr.length;
+					likedSongsArr[likedSongsArr.length] = tracksArr[i];
+
+					// likedSongsArr[likedSongIdx].likedSongIdx = likedSongIdx;
+
+					// console.log(likedSongsArr[likedSongIdx]);
+					console.log(likedSongsArr);
+
+					// likedSongIdx++;
+				} else {
+					let index = likedSongsArr.findIndex((x) => x.idx === i);
+
+					// console.log(index);
+
+					// console.log(likedSongsArr);
+
+					likedSongsArr.splice(index, 1);
+
+					// console.log(likedSongsArr);
+				}
+			});
+			// console.log(likedSongsArr);
 		}
 	}
 
