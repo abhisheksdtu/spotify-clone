@@ -9,7 +9,10 @@ const genreDescription = document.querySelector(
 );
 let tracksContainer = document.querySelector('.tracks-container');
 let playlistPage = document.querySelector('.playlist-page');
+
 let tracksArr = [];
+
+let likedSongsArr = [];
 
 const APIController = (function () {
 	const clientId = 'ea31e31a4afd417383e99aa0e994dd8c';

@@ -6,6 +6,8 @@ let likedSongsIcon = document.querySelector('.liked-songs-icon');
 let searchIcon = document.querySelector('.search-icon');
 let options = document.querySelectorAll('.option');
 
+let likedSongsContainer = document.querySelector('.liked-songs-container');
+
 homeBtn.addEventListener('click', homeFunction);
 
 searchBtn.addEventListener('click', searchFunction);
@@ -46,16 +48,7 @@ function homeFunction() {
 	// CHANGE TO ACTIVE CLASS
 	homeBtn.classList.add('left-option-active');
 
-	// homeIcon.innerHTML = `
-	//     <span class="material-icons-outlined">
-	//     home
-	//     </span>
-	//     `;
-
-	// homeIconFilled = false;
-	// homeBtn.classList.remove('left-option-active');
-
-	// homeClickCount++;
+	showHomePage();
 }
 
 function searchFunction() {
@@ -117,5 +110,23 @@ function likedSongsFunction() {
 	// CHANGE TO ACTIVE CLASS
 	likedSongsBtn.classList.add('left-option-active');
 
-	// likedSongsClickCount++;
+	// SHOW LIKED SONGS ON RIGHT CONTAINER
+
+	showLikedSongs();
+}
+
+async function showLikedSongs() {
+	browseContainer.style.display = 'none';
+	playlistContainer.style.display = 'none';
+	playlistPage.style.display = 'none';
+
+	likedSongsContainer.style.display = 'flex';
+}
+
+async function showHomePage() {
+	playlistContainer.style.display = 'none';
+	playlistPage.style.display = 'none';
+	likedSongsContainer.style.display = 'none';
+
+	browseContainer.style.display = 'flex';
 }
