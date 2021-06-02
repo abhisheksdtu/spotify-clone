@@ -20,20 +20,6 @@ async function mainMusicPlayer(tracksArr) {
 	for (let i = 0; i < allTracks.length; i++) {
 		let elem = allTracks[i];
 
-		// let isMusicPlaying = false;
-
-		// if (isMusicPlaying == false) {
-		// 	elem.onclick = function () {
-		// 		loadTrack(i);
-		// 		isMusicPlaying = true;
-		// 	};
-		// } else {
-		// 	elem.onclick = function () {
-		// 		pauseTrack();
-		// 		isMusicPlaying = false;
-		// 	};
-		// }
-
 		elem.addEventListener('click', function () {
 			loadTrack(i);
 

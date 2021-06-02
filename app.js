@@ -376,25 +376,7 @@ const APPController = (function (UICtrl, APICtrl) {
 	function musicPlayer() {
 		// console.log('music player');
 
-		let allTracks = document.querySelectorAll('.track');
-
-		for (let i = 0; i < allTracks.length; i++) {
-			let elem = allTracks[i];
-
-			let isPlaying = false;
-
-			elem.addEventListener('click', function () {
-				// console.log(i);
-				isPlaying = !isPlaying;
-
-				if (isPlaying === false) {
-					isPlaying = true;
-					mainMusicPlayer(i);
-				} else {
-					isPlaying = false;
-				}
-			});
-		}
+		mainMusicPlayer(tracksArr);
 	}
 
 	return {
