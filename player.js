@@ -15,194 +15,209 @@ async function mainMusicPlayer(tracksArr) {
 	let isPlaying = false;
 
 	// MAIN EVENT LISTENER
-	let allTracks = document.querySelectorAll('.track');
+	let allTracks = document.querySelectorAll('.track .track-index');
 
 	for (let i = 0; i < allTracks.length; i++) {
 		let elem = allTracks[i];
 
+		let clickCount = 0;
+
+		let updateTimer;
+
+		let currentTrack = document.createElement('audio');
+
+		let duration = 30;
+
+		let isShuffling = false;
+
+		currentTrack.muted = true;
+
 		elem.addEventListener('click', function () {
-			loadTrack(i);
+			trackIndex = i;
 
-			elem.addEventListener('click', function () {
-				pauseTrack();
-			});
-		});
-	}
+			// EVENT LISTENERS
+			shuffleBtn.addEventListener('click', shuffleTrack);
 
-	let updateTimer;
+			prevBtn.addEventListener('click', prevTrack);
 
-	let currentTrack = document.createElement('audio');
+			playPauseBtn.addEventListener('click', playPauseTrack);
+			playPauseBtn.addEventListener('click', playPauseTrack);
 
-	let duration = 30;
+			nextBtn.addEventListener('click', nextTrack);
 
-	let isShuffling = false;
+			repeatBtn.addEventListener('click', repeatTrack);
 
-	currentTrack.muted = true;
+			seekSlider.addEventListener('change', seekTo);
 
-	// EVENT LISTENERS
+			volumeSlider.addEventListener('change', setVolume);
 
-	shuffleBtn.addEventListener('click', shuffleTrack);
+			function loadTrack(trackIndex) {
+				// Clear the previous seek timer
+				clearInterval(updateTimer);
+				// resetValues();
 
-	prevBtn.addEventListener('click', prevTrack);
+				// Load a new track
+				// console.log(tracksArr[trackIndex].songUrl);
+				currentTrack.src = tracksArr[trackIndex].songUrl;
+				currentTrack.load();
 
-	playPauseBtn.addEventListener('click', playPauseTrack);
-	playPauseBtn.addEventListener('click', playPauseTrack);
+				// UPDATE DETAILS
+				let trackImg = `<img src="${tracksArr[trackIndex].img}">`;
+				trackImgContainer.innerHTML = trackImg;
 
-	nextBtn.addEventListener('click', nextTrack);
+				trackName.innerHTML = tracksArr[trackIndex].trackName;
+				trackArtist.innerHTML = tracksArr[trackIndex].artists;
 
-	repeatBtn.addEventListener('click', repeatTrack);
+				currentTrack.muted = false;
+				playTrack();
 
-	seekSlider.addEventListener('change', seekTo);
+				updateTimer = setInterval(seekUpdate, 1000);
+				currentTrack.addEventListener('ended', nextTrack);
+			}
 
-	volumeSlider.addEventListener('change', setVolume);
+			function resetValues() {
+				currentTime.innerHTML = '00:00';
+				totalDuration.innerHTML = '00:00';
+				seekSlider.value = 0;
+			}
 
-	function loadTrack(trackIndex) {
-		// Clear the previous seek timer
-		clearInterval(updateTimer);
-		// resetValues();
+			function shuffleTrack() {
+				if (!isShuffling) {
+					isShuffling = true;
 
-		// Load a new track
-		// console.log(tracksArr[trackIndex].songUrl);
-		currentTrack.src = tracksArr[trackIndex].songUrl;
-		currentTrack.load();
+					shuffleBtn.style.color = '#1ED760';
 
-		// UPDATE DETAILS
-		let trackImg = `<img src="${tracksArr[trackIndex].img}">`;
-		trackImgContainer.innerHTML = trackImg;
+					// trackIndex = Math.floor(Math.random() * tracksArr.length);
 
-		trackName.innerHTML = tracksArr[trackIndex].trackName;
-		trackArtist.innerHTML = tracksArr[trackIndex].artists;
+					currentTrack.addEventListener('ended', nextTrack);
+				} else {
+					isShuffling = false;
 
-		currentTrack.muted = false;
-		playTrack();
+					shuffleBtn.style.color = '#aaa';
 
-		updateTimer = setInterval(seekUpdate, 1000);
-		currentTrack.addEventListener('ended', nextTrack);
-	}
+					currentTrack.addEventListener('ended', nextTrack);
+				}
 
-	function resetValues() {
-		currentTime.innerHTML = '00:00';
-		totalDuration.innerHTML = '00:00';
-		seekSlider.value = 0;
-	}
+				// loadTrack(trackIndex);
+				// playTrack();
+			}
 
-	function shuffleTrack() {
-		if (!isShuffling) {
-			isShuffling = true;
+			function repeatTrack() {
+				currentTrack.loop = true;
+				repeatBtn.style.color = '#1ED760';
 
-			shuffleBtn.style.color = '#1ED760';
+				// loadTrack(trackIndex);
+				// playTrack();
+			}
 
-			// trackIndex = Math.floor(Math.random() * tracksArr.length);
+			function playPauseTrack() {
+				if (!isPlaying) {
+					playTrack();
+				} else {
+					pauseTrack();
+				}
+			}
 
-			currentTrack.addEventListener('ended', nextTrack);
-		} else {
-			isShuffling = false;
-
-			shuffleBtn.style.color = '#aaa';
-
-			currentTrack.addEventListener('ended', nextTrack);
-		}
-
-		// loadTrack(trackIndex);
-		// playTrack();
-	}
-
-	function repeatTrack() {
-		currentTrack.loop = true;
-		repeatBtn.style.color = '#1ED760';
-
-		// loadTrack(trackIndex);
-		// playTrack();
-	}
-
-	function playPauseTrack() {
-		if (!isPlaying) {
-			playTrack();
-		} else {
-			pauseTrack();
-		}
-	}
-
-	function playTrack() {
-		currentTrack.play();
-		isPlaying = true;
-		playPauseBtn.innerHTML = `
+			function playTrack() {
+				currentTrack.play();
+				isPlaying = true;
+				playPauseBtn.innerHTML = `
 			<span class="material-icons-round">
 				pause_circle_outline
 			</span>
 		`;
-	}
+			}
 
-	function pauseTrack() {
-		currentTrack.pause();
-		isPlaying = false;
-		playPauseBtn.innerHTML = `
+			function pauseTrack() {
+				currentTrack.pause();
+				isPlaying = false;
+				playPauseBtn.innerHTML = `
 			<span class="material-icons-round">
                 play_circle_outline
             </span>
 		`;
-	}
-
-	function nextTrack() {
-		if (isShuffling) {
-			trackIndex = Math.floor(Math.random() * tracksArr.length);
-		} else {
-			trackIndex = (trackIndex + 1) % tracksArr.length;
-		}
-
-		loadTrack(trackIndex);
-		playTrack();
-	}
-
-	function prevTrack() {
-		trackIndex = (trackIndex - 1) % tracksArr.length;
-
-		loadTrack(trackIndex);
-		playTrack();
-	}
-
-	function seekTo() {
-		let seekto = duration * (seekSlider.value / 100);
-		currentTrack.currentTime = seekto;
-	}
-
-	function setVolume() {
-		currentTrack.volume = volumeSlider.value / 100;
-	}
-
-	function seekUpdate() {
-		let seekPosition = 0;
-
-		if (!isNaN(currentTrack.duration)) {
-			seekPosition = currentTrack.currentTime * (100 / currentTrack.duration);
-
-			seekSlider.value = seekPosition;
-
-			let currentMinutes = Math.floor(currentTrack.currentTime / 60);
-			let currentSeconds = Math.floor(
-				currentTrack.currentTime - currentMinutes * 60
-			);
-			let durationMinutes = Math.floor(currentTrack.duration / 60);
-			let durationSeconds = Math.floor(
-				currentTrack.duration - durationMinutes * 60
-			);
-
-			if (currentSeconds < 10) {
-				currentSeconds = '0' + currentSeconds;
-			}
-			if (durationSeconds < 10) {
-				durationSeconds = '0' + durationSeconds;
-			}
-			if (currentMinutes < 10) {
-				currentMinutes = '0' + currentMinutes;
-			}
-			if (durationMinutes < 10) {
-				durationMinutes = '0' + durationMinutes;
 			}
 
-			currentTime.innerHTML = currentMinutes + ':' + currentSeconds;
-			totalDuration.innerHTML = durationMinutes + ':' + durationSeconds;
-		}
+			function nextTrack() {
+				if (isShuffling) {
+					trackIndex = Math.floor(Math.random() * tracksArr.length);
+				} else {
+					trackIndex = (trackIndex + 1) % tracksArr.length;
+				}
+
+				loadTrack(trackIndex);
+				playTrack();
+			}
+
+			function prevTrack() {
+				trackIndex = (trackIndex - 1) % tracksArr.length;
+
+				loadTrack(trackIndex);
+				playTrack();
+			}
+
+			function seekTo() {
+				let seekto = duration * (seekSlider.value / 100);
+				currentTrack.currentTime = seekto;
+			}
+
+			function setVolume() {
+				currentTrack.volume = volumeSlider.value / 100;
+			}
+
+			function seekUpdate() {
+				let seekPosition = 0;
+
+				if (!isNaN(currentTrack.duration)) {
+					seekPosition =
+						currentTrack.currentTime * (100 / currentTrack.duration);
+
+					seekSlider.value = seekPosition;
+
+					let currentMinutes = Math.floor(currentTrack.currentTime / 60);
+					let currentSeconds = Math.floor(
+						currentTrack.currentTime - currentMinutes * 60
+					);
+					let durationMinutes = Math.floor(currentTrack.duration / 60);
+					let durationSeconds = Math.floor(
+						currentTrack.duration - durationMinutes * 60
+					);
+
+					if (currentSeconds < 10) {
+						currentSeconds = '0' + currentSeconds;
+					}
+					if (durationSeconds < 10) {
+						durationSeconds = '0' + durationSeconds;
+					}
+					if (currentMinutes < 10) {
+						currentMinutes = '0' + currentMinutes;
+					}
+					if (durationMinutes < 10) {
+						durationMinutes = '0' + durationMinutes;
+					}
+
+					currentTime.innerHTML = currentMinutes + ':' + currentSeconds;
+					totalDuration.innerHTML = durationMinutes + ':' + durationSeconds;
+				}
+			}
+
+			if (clickCount % 2 == 0) {
+				loadTrack(i);
+			} else {
+				pauseTrack();
+				// console.log('fn call');
+				// currentTrack.stop();
+				// currentTrack.muted = true;
+			}
+
+			// console.log('outside II click');
+			// elem.addEventListener('click', function () {
+			// 	pauseTrack();
+			// 	console.log('inside');
+			// });
+
+			clickCount++;
+		});
 	}
 }
 

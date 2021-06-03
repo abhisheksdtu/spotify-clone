@@ -20,7 +20,6 @@ let searchClickCount = 0;
 let likedSongsClickCount = 0;
 let likedSongsIconFilled = false;
 
-
 function homeFunction() {
 	// REMOVE ACTIVE CLASS FROM ALL OTHER & CHANGE THEIR ICONS
 	for (let i = 0; i < options.length; i++) {
@@ -120,6 +119,339 @@ async function showLikedSongs() {
 	browseContainer.style.display = 'none';
 	playlistContainer.style.display = 'none';
 	playlistPage.style.display = 'none';
+
+	let mainTracksContainerLiked = document.querySelector(
+		'.liked-songs-container .main-tracks-container'
+	);
+
+	for (let i = 0; i < likedSongsArr.length; i++) {
+		console.log(likedSongsArr[i]);
+
+		createTrack(
+			likedSongsArr[i].idx,
+			likedSongsArr[i].id,
+			likedSongsArr[i].trackName,
+			likedSongsArr[i].albumName,
+			likedSongsArr[i].img,
+			likedSongsArr[i].releaseDate,
+			likedSongsArr[i].artists,
+			likedSongsArr[i].duration,
+			likedSongsArr[i].songUrl,
+			likedSongsArr[i].likedSongIdx
+		);
+
+		hoverTrack();
+
+		musicPlayer();
+
+		function createTrack(
+			idx,
+			id,
+			trackName,
+			albumName,
+			img,
+			releaseDate,
+			artists,
+			duration,
+			songUrl,
+			likedSongIdx
+		) {
+			let html = `
+				<div class="track-index">
+					<div class="track-index-number">${likedSongIdx + 1}</div>
+						<span class="track-index-icon" style="display: none;">
+							<i class="fas fa-play"></i>
+						</span>
+					</div>
+				</div>
+				
+				<div class="track-title-container">
+					<img src="${img}">
+					<div class="track-row">
+						<div class="track-title">${trackName}</div>
+						<div class="track-artists">
+							<span>
+								${artists}
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<div class='track-album'>
+					<span>
+						${albumName}
+					</span>
+				</div>
+				
+				<div class='track-date'>${releaseDate}</div>
+				
+				<div class='track-duration'>${duration}</div>
+				
+				<div class="track-like-song">
+					<input type="checkbox" class='heart-checkbox' name="heart" checked/>
+				</div>
+			`;
+
+			let elem = document.createElement('div');
+			elem.className = 'track';
+			// elem.id = `${id}`;
+			elem.innerHTML = html;
+
+			mainTracksContainerLiked.appendChild(elem);
+		}
+
+		function musicPlayer() {
+			// console.log('music player');
+
+			mainMusicPlayer(likedSongsArr);
+		}
+
+		function hoverTrack() {
+			let allTracks = document.querySelectorAll('.track');
+
+			for (let i = 0; i < allTracks.length; i++) {
+				let elem = allTracks[i];
+				elem.addEventListener('mouseenter', function () {
+					let trackIndex = document.querySelectorAll('.track-index-number');
+					let trackIndexIcon = document.querySelectorAll('.track-index-icon');
+
+					// console.log(trackIndex[i]);
+
+					trackIndex[i].style.display = 'none';
+
+					trackIndexIcon[i].style.display = 'block';
+				});
+
+				elem.addEventListener('mouseleave', function () {
+					let trackIndex = document.querySelectorAll('.track-index-number');
+					let trackIndexIcon = document.querySelectorAll('.track-index-icon');
+
+					trackIndexIcon[i].style.display = 'none';
+
+					trackIndex[i].style.display = 'block';
+				});
+			}
+		}
+
+		async function mainMusicPlayer(likedSongsArr) {
+			let trackName = document.querySelector('.music-details-row-name');
+			let trackArtist = document.querySelector('.music-details-row-artist');
+			let trackImgContainer = document.querySelector('.music-details-img');
+			let playPauseBtn = document.querySelector('.playpause-btn');
+			let nextBtn = document.querySelector('.next-btn');
+			let prevBtn = document.querySelector('.prev-btn');
+			let shuffleBtn = document.querySelector('.shuffle-btn');
+			let repeatBtn = document.querySelector('.repeat-btn');
+			let seekSlider = document.querySelector('.seek-slider');
+			let volumeSlider = document.querySelector('.volume-slider');
+			let currentTime = document.querySelector('.current-time');
+			let totalDuration = document.querySelector('.total-duration');
+
+			let isPlaying = false;
+
+			// MAIN EVENT LISTENER
+			let allTracks = document.querySelectorAll(
+				'.liked-songs-container .track'
+			);
+
+			for (let i = 0; i < allTracks.length; i++) {
+				let elem = allTracks[i];
+
+				elem.addEventListener('click', function () {
+					loadTrack(i);
+
+					elem.addEventListener('click', function () {
+						pauseTrack();
+					});
+				});
+			}
+
+			let updateTimer;
+
+			let allAudioElem = document.querySelectorAll('audio');
+
+			for (let i = 0; i < allAudioElem.length; i++) {
+				allAudioElem[i].remove();
+			}
+
+			let currentTrack = document.createElement('audio');
+
+			let duration = 30;
+
+			let isShuffling = false;
+
+			currentTrack.muted = true;
+
+			// EVENT LISTENERS
+
+			shuffleBtn.addEventListener('click', shuffleTrack);
+
+			prevBtn.addEventListener('click', prevTrack);
+
+			playPauseBtn.addEventListener('click', playPauseTrack);
+			playPauseBtn.addEventListener('click', playPauseTrack);
+
+			nextBtn.addEventListener('click', nextTrack);
+
+			repeatBtn.addEventListener('click', repeatTrack);
+
+			seekSlider.addEventListener('change', seekTo);
+
+			volumeSlider.addEventListener('change', setVolume);
+
+			function loadTrack(trackIndex) {
+				// Clear the previous seek timer
+				clearInterval(updateTimer);
+				// resetValues();
+
+				// Load a new track
+				console.log(likedSongsArr[trackIndex]);
+				currentTrack.src = likedSongsArr[trackIndex].songUrl;
+				currentTrack.load();
+
+				// UPDATE DETAILS
+				let trackImg = `<img src="${likedSongsArr[trackIndex].img}">`;
+				trackImgContainer.innerHTML = trackImg;
+
+				trackName.innerHTML = likedSongsArr[trackIndex].trackName;
+				trackArtist.innerHTML = likedSongsArr[trackIndex].artists;
+
+				currentTrack.muted = false;
+				playTrack();
+
+				updateTimer = setInterval(seekUpdate, 1000);
+				currentTrack.addEventListener('ended', nextTrack);
+			}
+
+			function resetValues() {
+				currentTime.innerHTML = '00:00';
+				totalDuration.innerHTML = '00:00';
+				seekSlider.value = 0;
+			}
+
+			function shuffleTrack() {
+				if (!isShuffling) {
+					isShuffling = true;
+
+					shuffleBtn.style.color = '#1ED760';
+
+					// trackIndex = Math.floor(Math.random() * likedSongsArr.length);
+
+					currentTrack.addEventListener('ended', nextTrack);
+				} else {
+					isShuffling = false;
+
+					shuffleBtn.style.color = '#aaa';
+
+					currentTrack.addEventListener('ended', nextTrack);
+				}
+
+				// loadTrack(trackIndex);
+				// playTrack();
+			}
+
+			function repeatTrack() {
+				currentTrack.loop = true;
+				repeatBtn.style.color = '#1ED760';
+
+				// loadTrack(trackIndex);
+				// playTrack();
+			}
+
+			function playPauseTrack() {
+				if (!isPlaying) {
+					playTrack();
+				} else {
+					pauseTrack();
+				}
+			}
+
+			function playTrack() {
+				currentTrack.play();
+				isPlaying = true;
+				playPauseBtn.innerHTML = `
+			<span class="material-icons-round">
+				pause_circle_outline
+			</span>
+		`;
+			}
+
+			function pauseTrack() {
+				currentTrack.pause();
+				isPlaying = false;
+				playPauseBtn.innerHTML = `
+			<span class="material-icons-round">
+                play_circle_outline
+            </span>
+		`;
+			}
+
+			function nextTrack() {
+				if (isShuffling) {
+					trackIndex = Math.floor(Math.random() * likedSongsArr.length);
+				} else {
+					trackIndex = (trackIndex + 1) % likedSongsArr.length;
+				}
+
+				loadTrack(trackIndex);
+				playTrack();
+			}
+
+			function prevTrack() {
+				trackIndex = (trackIndex - 1) % likedSongsArr.length;
+
+				loadTrack(trackIndex);
+				playTrack();
+			}
+
+			function seekTo() {
+				let seekto = duration * (seekSlider.value / 100);
+				currentTrack.currentTime = seekto;
+			}
+
+			function setVolume() {
+				currentTrack.volume = volumeSlider.value / 100;
+			}
+
+			function seekUpdate() {
+				let seekPosition = 0;
+
+				if (!isNaN(currentTrack.duration)) {
+					seekPosition =
+						currentTrack.currentTime * (100 / currentTrack.duration);
+
+					seekSlider.value = seekPosition;
+
+					let currentMinutes = Math.floor(currentTrack.currentTime / 60);
+					let currentSeconds = Math.floor(
+						currentTrack.currentTime - currentMinutes * 60
+					);
+					let durationMinutes = Math.floor(currentTrack.duration / 60);
+					let durationSeconds = Math.floor(
+						currentTrack.duration - durationMinutes * 60
+					);
+
+					if (currentSeconds < 10) {
+						currentSeconds = '0' + currentSeconds;
+					}
+					if (durationSeconds < 10) {
+						durationSeconds = '0' + durationSeconds;
+					}
+					if (currentMinutes < 10) {
+						currentMinutes = '0' + currentMinutes;
+					}
+					if (durationMinutes < 10) {
+						durationMinutes = '0' + durationMinutes;
+					}
+
+					currentTime.innerHTML = currentMinutes + ':' + currentSeconds;
+					totalDuration.innerHTML = durationMinutes + ':' + durationSeconds;
+				}
+			}
+		}
+	}
+
+	console.log(likedSongsArr);
 
 	likedSongsContainer.style.display = 'flex';
 }

@@ -178,7 +178,7 @@ const UIController = (function () {
 			playlistPage.style.display = 'flex';
 
 			let mainTracksContainer = document.querySelector(
-				'.main-tracks-container'
+				'.playlist-page .main-tracks-container'
 			);
 
 			if (tracksArr[idx] !== null) {
@@ -280,7 +280,7 @@ const APPController = (function (UICtrl, APICtrl) {
 				// console.log(g.id);
 				// ge the playlist based on a genre
 				const playlist = await APICtrl.getPlaylistByGenre(token, genreId);
-				console.log(playlist);
+				// console.log(playlist);
 				// create a playlist list item for every playlist returned
 
 				playlist.forEach((p) => {
@@ -343,6 +343,8 @@ const APPController = (function (UICtrl, APICtrl) {
 							img: el.track.album.images[1].url,
 							songUrl: el.track.preview_url,
 							duration: 30,
+							albumName: el.track.album.name,
+							releaseDate: el.track.album.release_date,
 						});
 
 						UICtrl.createTrack(
