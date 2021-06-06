@@ -19,9 +19,12 @@ body {
 		position: relative;
 
 		.left-container {
-			width: 15vw;
-			border-right: 1px solid #fff;
+			// border-right: 1px solid #aaa;
 			color: #eee;
+			// width: 15vw;
+			min-width: 190px;
+			width: 225px;
+			// max-width: 400px;
 
 			.icon,
 			.options,
@@ -136,9 +139,25 @@ body {
 			}
 		}
 
+		.resizer-x {
+			position: relative;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: black;
+			// padding: 4px;
+			width: 1px;
+			z-index: 0;
+			cursor: col-resize;
+
+			&:hover,
+			&:active {
+				background: #aaa;
+			}
+		}
+
 		.right-container {
 			width: 85vw;
-			overflow-x: auto;
 			height: calc(100vh - 80px);
 			background-image: linear-gradient(
 				to right bottom,
@@ -148,8 +167,33 @@ body {
 				#161616,
 				#121212
 			);
+			overflow-y: scroll;
+			overflow-x: hidden;
 
 			padding: 30px;
+
+			// CUSTOM SCROLLBAR
+			&::-webkit-scrollbar {
+				width: 12px;
+			}
+
+			&::-webkit-scrollbar-track {
+				-webkit-box-shadow: inset 0 0 6px rgb(83, 83, 83);
+				background-color: #000;
+				-webkit-border-radius: 10px;
+				border-radius: 10px;
+			}
+
+			&::-webkit-scrollbar-thumb {
+				-webkit-border-radius: 10px;
+				border-radius: 10px;
+				background: #444;
+				-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+			}
+
+			&::-webkit-scrollbar-thumb:window-inactive {
+				background: #444;
+			}
 
 			.top-bar {
 				height: 50px;
@@ -164,6 +208,7 @@ body {
 				justify-content: center;
 				align-items: center;
 				position: fixed;
+				top: 5px;
 				z-index: 9;
 				cursor: pointer;
 
@@ -180,14 +225,96 @@ body {
 			.content-container {
 				.content-heading {
 					padding: 1rem;
-					font-size: 20px;
-					font-weight: bold;
+					font-size: 24px;
+					font-weight: 400;
+				}
+
+				.genre-heading {
+					display: flex;
+					width: 100%;
+					height: 200px;
+					background: linear-gradient(180deg, #1db954, #191414);
+					align-items: center;
+					padding: 30px;
+					border-radius: 4px;
+					margin-bottom: 1rem;
+					// overflow: scroll;
+
+					h1 {
+						font-size: 90px;
+						font-weight: 700;
+						font-family: Helvetica, sans-serif;
+						letter-spacing: -4px;
+					}
+				}
+
+				.playlist-heading-details {
+					display: flex;
+					width: 100%;
+					height: 250px;
+					background: linear-gradient(180deg, #1db954, #191414);
+					align-items: center;
+					// justify-content: center;
+					// flex-direction: column;
+					padding: 30px;
+					border-radius: 2px;
+
+					.playlist-img {
+						height: 200px;
+						width: 200px;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+
+						img {
+							width: 100%;
+							height: 100%;
+							// display: block;
+						}
+					}
+
+					.playlist-content {
+						padding-left: 30px;
+
+						h2 {
+							font-size: 11px;
+							font-weight: 700;
+						}
+
+						h1 {
+							font-size: 90px;
+							font-weight: 700;
+							font-family: Helvetica, sans-serif;
+							letter-spacing: -4px;
+						}
+
+						.playlist-description {
+							font-size: 14px;
+							font-family: Helvetica, sans-serif;
+							color: #ccc;
+							// letter-spacing: 0px;
+							padding: 10px 0;
+						}
+
+						.user-name-in-playlist {
+							span {
+								font-size: 14px;
+								font-weight: 700;
+								cursor: pointer;
+
+								&:hover {
+									text-decoration: underline;
+								}
+							}
+						}
+					}
 				}
 
 				.browse-container {
 					display: flex;
 					justify-content: space-evenly;
 					flex-wrap: wrap;
+					// overflow: scroll;
 
 					.browse {
 						height: 250px;
@@ -384,30 +511,35 @@ body {
 										padding-left: 1rem;
 										width: 100%;
 
-										overflow: hidden;
 										white-space: nowrap;
-										word-wrap: break-word;
+										overflow: hidden;
+										// word-wrap: break-word;
 										text-overflow: ellipsis;
 
 										.track-title {
+											// flex: 1;
 											width: 100%;
+											// width: 100%;
+											min-width: 0px;
+											// width: 240px;
+											// height: 30px;
 											min-height: 60%;
-											overflow: hidden;
-											white-space: nowrap;
-											word-wrap: break-word;
-											text-overflow: ellipsis;
+											// min-height: 30px;
 											display: flex;
 											align-items: center;
 											color: #fff;
+
+											p {
+												padding-right: 1rem;
+												white-space: nowrap;
+												overflow: hidden;
+												text-overflow: ellipsis;
+											}
 										}
 
 										.track-artists {
 											width: 100%;
 											padding-right: 10px;
-											overflow: hidden;
-											white-space: nowrap;
-											word-wrap: break-word;
-											text-overflow: ellipsis;
 											min-height: 40%;
 											display: flex;
 											align-items: center;
@@ -415,6 +547,11 @@ body {
 											font-size: 14px;
 
 											span {
+												white-space: nowrap;
+												overflow: hidden;
+												text-overflow: ellipsis;
+												padding-right: 1rem;
+
 												&:hover {
 													text-decoration: underline;
 													cursor: pointer;
@@ -429,6 +566,11 @@ body {
 									min-width: 25%;
 
 									span {
+										white-space: nowrap;
+										overflow: hidden;
+										text-overflow: ellipsis;
+										padding-right: 1rem;
+
 										&:hover {
 											text-decoration: underline;
 											cursor: pointer;
@@ -676,13 +818,16 @@ body {
 										.track-title {
 											width: 100%;
 											min-height: 60%;
-											overflow: hidden;
-											white-space: nowrap;
-											word-wrap: break-word;
-											text-overflow: ellipsis;
 											display: flex;
 											align-items: center;
 											color: #fff;
+
+											p {
+												padding-right: 1rem;
+												white-space: nowrap;
+												overflow: hidden;
+												text-overflow: ellipsis;
+											}
 										}
 
 										.track-artists {
@@ -698,9 +843,16 @@ body {
 											color: #bbb;
 											font-size: 14px;
 
-											&:hover {
-												text-decoration: underline;
-												cursor: pointer;
+											span {
+												white-space: nowrap;
+												overflow: hidden;
+												text-overflow: ellipsis;
+												padding-right: 1rem;
+
+												&:hover {
+													text-decoration: underline;
+													cursor: pointer;
+												}
 											}
 										}
 									}
@@ -710,9 +862,16 @@ body {
 									max-width: 25%;
 									min-width: 25%;
 
-									&:hover {
-										text-decoration: underline;
-										cursor: pointer;
+									span {
+										white-space: nowrap;
+										overflow: hidden;
+										text-overflow: ellipsis;
+										padding-right: 1rem;
+
+										&:hover {
+											text-decoration: underline;
+											cursor: pointer;
+										}
 									}
 								}
 

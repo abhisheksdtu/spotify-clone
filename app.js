@@ -9,6 +9,11 @@ const genreDescription = document.querySelector(
 );
 let tracksContainer = document.querySelector('.tracks-container');
 let playlistPage = document.querySelector('.playlist-page');
+let contentHeading = document.querySelector('.content-heading');
+let genreContentHeading = document.querySelector('.genre-heading');
+let playlistContentHeading = document.querySelector(
+	'.playlist-heading-details'
+);
 
 let tracksArr = [];
 
@@ -17,8 +22,8 @@ let likedSongsArr = [];
 let likedSongIdx = 0;
 
 const APIController = (function () {
-	const clientId = '9c04f77f5f55490e8e77e76d038b2934';
-	const clientSecret = '28c03dfb671c4f77b10195cb67ead2ff';
+	const clientId = 'ea31e31a4afd417383e99aa0e994dd8c';
+	const clientSecret = '2b65112ba398461389dbbe48efa4f37a';
 
 	// private methods
 	const _getToken = async () => {
@@ -127,6 +132,8 @@ const UIController = (function () {
 			// browseContainer.style.display = 'flex';
 
 			// console.log(imgUrl);
+			contentHeading.textContent = 'Browse All';
+			genreContentHeading.style.display = 'none';
 
 			let html = `
           		<img src="${imgUrl}">
@@ -142,17 +149,26 @@ const UIController = (function () {
 			browseContainer.appendChild(elem);
 		},
 
-		createPlaylist(name, value, description, img, owner) {
-			// console.log(name);
+		createPlaylist(name, value, description, img, owner, genreName) {
+			// console.log(name, genreName);
+			contentHeading.style.display = 'none';
+			genreContentHeading.style.display = 'flex';
+			genreContentHeading.innerHTML = `
+				<h1>${genreName}</h1>
+			`;
 
 			browseContainer.style.display = 'none';
+			playlistContainer.style.display = 'none';
 			playlistContainer.style.display = 'flex';
 
 			let html = `
-          <img src="${img}">
-          <div class="heading">${name}</div>
-          <div class="owner">By ${owner}</div>          
-      `;
+				<img src="${img}">
+				<div class="heading">${name}</div>
+				<div style='display:none'>${description}</div>
+				<div class="owner">By
+					<span>${owner}</span>
+				</div>
+			`;
 
 			let elem = document.createElement('div');
 			elem.className = 'playlist';
@@ -184,6 +200,12 @@ const UIController = (function () {
 			if (tracksArr[idx] !== null) {
 				// console.log(id);
 
+				// if (tracksArr.includes(tracksArr[idx].idx)) {
+				// 	console.log('true');
+				// }
+
+				// console.log(tracksArr[idx].idx);
+
 				let html = `
 					<div class="track-index">
                         <div class="track-index-number">${idx + 1}</div>
@@ -196,7 +218,9 @@ const UIController = (function () {
 					<div class="track-title-container">
                         <img src="${img}">
                         <div class="track-row">
-                        	<div class="track-title">${trackName}</div>
+                        	<div class="track-title">
+								<p>${trackName}</p>
+							</div>
                             <div class="track-artists">
 								<span>
 									${artists}
@@ -269,6 +293,8 @@ const APPController = (function (UICtrl, APICtrl) {
 		for (let i = 0; i < genre.length; i++) {
 			let g = genre[i];
 
+			// console.log(g.textContent);
+
 			g.addEventListener('click', async function () {
 				//get the token that's stored on the page
 				const token = UICtrl.getStoredToken().token;
@@ -277,6 +303,7 @@ const APPController = (function (UICtrl, APICtrl) {
 				// console.log(g.id);
 				// get the genre id associated with the selected genre
 				const genreId = g.id;
+				// console.log(g);
 				// console.log(g.id);
 				// ge the playlist based on a genre
 				const playlist = await APICtrl.getPlaylistByGenre(token, genreId);
@@ -291,7 +318,8 @@ const APPController = (function (UICtrl, APICtrl) {
 						p.tracks.href,
 						p.description,
 						p.images[0].url,
-						p.owner.display_name
+						p.owner.display_name,
+						g.textContent
 					);
 				});
 				showSongs();
@@ -301,20 +329,50 @@ const APPController = (function (UICtrl, APICtrl) {
 
 	const showSongs = async () => {
 		const playlist = document.querySelectorAll('.playlist');
-		// console.log(playlist);
+
 		for (let i = 0; i < playlist.length; i++) {
 			let g = playlist[i];
-
 			// console.log(g);
 
 			g.addEventListener('click', async function () {
 				//get the token that's stored on the page
 				const token = UICtrl.getStoredToken().token;
+				// console.log(g.children[0].src);
+				let playlistImg = g.children[0].src;
+				// console.log(g.children[1].textContent);
+				let playlistHeading = g.children[1].textContent;
+				// console.log(g.children[2].textContent);
+				let playlistDescription = g.children[2].textContent;
+				console.log(g.children[3].children[0].textContent);
+				let playlistOwner = g.children[3].children[0].textContent;
 
 				const playlistId = g.id;
-				// console.log(g.id);
+				// console.log(playlistId);
+
+				// console.log(playlistImg);
 
 				const tracks = await APICtrl.getTracks(token, playlistId);
+
+				contentHeading.style.display = 'none';
+				genreContentHeading.style.display = 'none';
+
+				playlistContentHeading.innerHTML = `
+					<div class="playlist-img">
+							<img src="${playlistImg}">
+					</div>
+					<div class="playlist-content">
+						<h2>
+							Playlist
+						</h2>
+						<h1>${playlistHeading}</h1>
+						<div class="playlist-description">${playlistDescription}</div>
+						<div class="user-name-in-playlist">
+							<span>${playlistOwner}</span>
+						</div>
+					</div>	
+				`;
+
+				playlistContentHeading.style.display = 'flex';
 
 				let idx = 0;
 				tracks.forEach((el) => {
@@ -336,6 +394,7 @@ const APPController = (function (UICtrl, APICtrl) {
 					// console.log(el.track.album.images[1].url);
 
 					if (el.track.preview_url !== null) {
+						// if(tracksArr.includes())
 						tracksArr.push({
 							idx: idx,
 							trackName: el.track.name,
@@ -346,6 +405,8 @@ const APPController = (function (UICtrl, APICtrl) {
 							albumName: el.track.album.name,
 							releaseDate: el.track.album.release_date,
 						});
+
+						// console.log(tracksArr);
 
 						UICtrl.createTrack(
 							idx,
@@ -420,7 +481,7 @@ const APPController = (function (UICtrl, APICtrl) {
 					// likedSongsArr[likedSongIdx].likedSongIdx = likedSongIdx;
 
 					// console.log(likedSongsArr[likedSongIdx]);
-					console.log(likedSongsArr);
+					// console.log(likedSongsArr);
 
 					// likedSongIdx++;
 				} else {

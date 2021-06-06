@@ -5,14 +5,16 @@ let homeIcon = document.querySelector('.home-icon');
 let likedSongsIcon = document.querySelector('.liked-songs-icon');
 let searchIcon = document.querySelector('.search-icon');
 let options = document.querySelectorAll('.option');
-
 let likedSongsContainer = document.querySelector('.liked-songs-container');
+let navigationBtn = document.querySelector('.navigation-container');
 
 homeBtn.addEventListener('click', homeFunction);
 
 searchBtn.addEventListener('click', searchFunction);
 
 likedSongsBtn.addEventListener('click', likedSongsFunction);
+
+// navigationBtn.addEventListener('click', navigationFunction);
 
 let homeClickCount = 0;
 let homeIconFilled = false;
@@ -116,6 +118,15 @@ function likedSongsFunction() {
 }
 
 async function showLikedSongs() {
+	let contentHeading = document.querySelector('.content-heading');
+	let genreContentHeading = document.querySelector('.genre-heading');
+	let playlistContentHeading = document.querySelector(
+		'.playlist-heading-details'
+	);
+
+	contentHeading.style.display = 'none';
+	genreContentHeading.style.display = 'none';
+	playlistContentHeading.style.display = 'none';
 	browseContainer.style.display = 'none';
 	playlistContainer.style.display = 'none';
 	playlistPage.style.display = 'none';
@@ -125,7 +136,7 @@ async function showLikedSongs() {
 	);
 
 	for (let i = 0; i < likedSongsArr.length; i++) {
-		console.log(likedSongsArr[i]);
+		// console.log(likedSongsArr[i]);
 
 		createTrack(
 			likedSongsArr[i].idx,
@@ -168,7 +179,9 @@ async function showLikedSongs() {
 				<div class="track-title-container">
 					<img src="${img}">
 					<div class="track-row">
-						<div class="track-title">${trackName}</div>
+						<div class="track-title">
+							<p>${trackName}</p>
+						</div>
 						<div class="track-artists">
 							<span>
 								${artists}
@@ -458,8 +471,94 @@ async function showLikedSongs() {
 
 async function showHomePage() {
 	playlistContainer.style.display = 'none';
+	playlistContainer.innerHTML = '';
 	playlistPage.style.display = 'none';
+	let mainTracksContainer = document.querySelector(
+		'.playlist-page .main-tracks-container'
+	);
+	// mainTracksContainer.innerHTML = '';
 	likedSongsContainer.style.display = 'none';
+	let mainTracksContainerLiked = document.querySelector(
+		'.liked-songs-container .main-tracks-container'
+	);
+	mainTracksContainerLiked.innerHTML = '';
 
 	browseContainer.style.display = 'flex';
 }
+
+// async function navigationFunction() {
+
+// }
+
+// IIFE FOR RESIZABLE LEFT CONTAINER
+(function resizableX() {
+	const resizer = document.querySelector('.resizer-x');
+	resizer.addEventListener('mousedown', onmousedown);
+	resizer.addEventListener('touchstart', ontouchstart);
+
+	// for mobile
+	function ontouchstart(e) {
+		e.preventDefault();
+		resizer.addEventListener('touchmove', ontouchmove);
+		resizer.addEventListener('touchend', ontouchend);
+	}
+	function ontouchmove(e) {
+		e.preventDefault();
+		const clientX = e.touches[0].clientX;
+		const deltaX = clientX - (resizer._clientX || clientX);
+		resizer._clientX = clientX;
+		const l = resizer.previousElementSibling;
+		const r = resizer.nextElementSibling;
+		// LEFT
+		if (deltaX < 0) {
+			const w = Math.round(parseInt(getComputedStyle(l).width) + deltaX);
+			l.style.flex = `0 ${w < 10 ? 0 : w}px`;
+			r.style.flex = '1 0';
+		}
+		// RIGHT
+		if (deltaX > 0) {
+			const w = Math.round(parseInt(getComputedStyle(r).width) - deltaX);
+			r.style.flex = `0 ${w < 10 ? 0 : w}px`;
+			l.style.flex = '1 0';
+		}
+	}
+	function ontouchend(e) {
+		e.preventDefault();
+		resizer.removeEventListener('touchmove', ontouchmove);
+		resizer.removeEventListener('touchend', ontouchend);
+		delete e._clientX;
+	}
+
+	// for desktop
+	function onmousedown(e) {
+		e.preventDefault();
+		document.addEventListener('mousemove', onmousemove);
+		document.addEventListener('mouseup', onmouseup);
+	}
+	function onmousemove(e) {
+		e.preventDefault();
+		const clientX = e.clientX;
+		const deltaX = clientX - (resizer._clientX || clientX);
+		resizer._clientX = clientX;
+		const l = resizer.previousElementSibling;
+		const r = resizer.nextElementSibling;
+		// LEFT
+		if (deltaX < 0) {
+			const w = Math.round(parseInt(getComputedStyle(l).width) + deltaX);
+			l.style.flex = `0 ${w < 10 ? 0 : w}px`;
+			r.style.flex = '1 0';
+		}
+		// RIGHT
+		if (deltaX > 0) {
+			const w = Math.round(parseInt(getComputedStyle(r).width) - deltaX);
+			r.style.flex = `0 ${w < 10 ? 0 : w}px`;
+			l.style.flex = '1 0';
+		}
+	}
+	function onmouseup(e) {
+		e.preventDefault();
+		document.removeEventListener('mousemove', onmousemove);
+		document.removeEventListener('mouseup', onmouseup);
+		delete e._clientX;
+	}
+})();
