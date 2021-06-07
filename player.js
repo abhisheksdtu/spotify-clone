@@ -22,6 +22,8 @@ async function mainMusicPlayer(tracksArr) {
 
 		let clickCount = 0;
 
+		let repeatCount = 0;
+
 		let updateTimer;
 
 		let currentTrack = document.createElement('audio');
@@ -103,8 +105,15 @@ async function mainMusicPlayer(tracksArr) {
 			}
 
 			function repeatTrack() {
-				currentTrack.loop = true;
-				repeatBtn.style.color = '#1ED760';
+				if (repeatCount % 2 == 0) {
+					currentTrack.loop = true;
+					repeatBtn.style.color = '#1ED760';
+				} else {
+					currentTrack.loop = false;
+					repeatBtn.style.color = '#aaa';
+				}
+
+				repeatCount++;
 
 				// loadTrack(trackIndex);
 				// playTrack();
