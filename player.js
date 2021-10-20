@@ -131,20 +131,20 @@ async function mainMusicPlayer(tracksArr) {
 				currentTrack.play();
 				isPlaying = true;
 				playPauseBtn.innerHTML = `
-			<span class="material-icons-round">
-				pause_circle_outline
-			</span>
-		`;
+					<span class="material-icons-round">
+						pause_circle_outline
+					</span>
+				`;
 			}
 
 			function pauseTrack() {
 				currentTrack.pause();
 				isPlaying = false;
 				playPauseBtn.innerHTML = `
-			<span class="material-icons-round">
-                play_circle_outline
-            </span>
-		`;
+					<span class="material-icons-round">
+						play_circle_outline
+					</span>
+				`;
 			}
 
 			function nextTrack() {
